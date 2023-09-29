@@ -1,12 +1,14 @@
 <html>
     <head>
         <link rel="stylesheet" href="/CSS/file.css"/>
+        <script src="/JS/start.js"></script>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
         <script async
-            src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAgVUwXqPdn4B5qpyYaNm7GbquGPy4YAg4&libraries=places">
+            src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAKJrCRSoFqfQkrqLzUj5lJeLJ6JfqMZGI&libraries=places">
         </script>
+        
     </head>
-    <title>Swiggy</title>
+    <title>HomePaltes</title>
     <body>
         <div class="container">
             <div id="section-1">
@@ -28,25 +30,14 @@
 
                     <div class="location_box">
                         <input type="text" id="inputtext" placeholder="Enter your delivery location" class="inputtext"/>
-                        <button class="locate_me">
-                        <div class="location_img">
+                        <button class="locate_me" onclick="Currentlocation()">
+                        <span class="location_img" >
                             <img src="/Images/location.png" width="25px" height="25px">
-                        </div>
-                        <div class="locate_metext">Locate me</div>
+                        </span>
+                        <span class="locate_metext" >Locate me</span>
                         </button>
-                        <div class="findfood">FIND FOOD</div>
                     </div>
-                    {{!-- JS --}}
-                    <script>
-                        $(document).ready(function(){
-                            var autocomplete
-                            var id="inputtext"
-                            autocomplete=new google.maps.places.Autocomplete(document.getElementById(id),{
-                                types:['geocode'],
-                            })
-                        })
-                    </script>
-                    {{!-- JS --}}
+                    <button class="findfood" >FIND FOOD</button>
                     <div>
                         <h3 class="pop_cities">POPULAR CITIES IN INDIA</h3>
                         <ul class="list">
@@ -66,11 +57,6 @@
                 </div>
                 <div id="subsection-2">
                     <img src="/Images/Lunch1_vlksgq.webp" height="100%" width="100%">
-                    
-                <!-- JS  for login-->
-                
-                
-                <!-- JS  -->
             </div>
 
 

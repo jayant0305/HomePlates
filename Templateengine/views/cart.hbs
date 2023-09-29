@@ -7,61 +7,9 @@
     <title></title>
     <body>
         {{>nav}}
-        {{!-- https://business.paytm.com/integration-builder/account-setup --}}
-        <button class="Pay" id="rzp-button1">Pay Now
-        </button>
-        <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+        
                   
     </body>
 </html>
 
 
-<script>
-            var orderId ;
-            $(document).ready(function(){
-            var settings = {
-            "url": "/cart",
-            "method": "POST",
-            "timeout": 0,
-            "headers": {
-             "Content-Type": "application/json"
-                },
-            "data": JSON.stringify({
-           "amount": "250000"
-            }),
-            };
-
-
-
-document.getElementById('rzp-button1').onclick = function(e){
-    var options = {
-        "key": process.env.KEY, // Enter the Key ID generated from the Dashboard
-        "amount": "250000", // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
-        "currency": "INR",
-        "name": "Jay",
-        "description": "Test Transaction",
-        "image": "https://example.com/your_logo",
-        "order_id": orderId, //This is a sample Order ID. Pass the `id` obtained in the response of Step 1
-        "callback_url": "https://eneqd3r9zrjok.x.pipedream.net/",
-        "theme": {
-        "color": "#3399cc"
-         }
-         };
-        var rzp1 = new Razorpay(options);
-       
-        rzp1.open();
-        e.preventDefault();
-        }
-
-
-//creates new orderId everytime
-$.ajax(settings).done(function (response) {
-
-  orderId=response.orderId;
-  console.log("orderId");
-  console.log(orderId);
-  
-});
-});
-    
-    </script>

@@ -29,12 +29,15 @@ const newSchema=new mongoose.Schema({
             type:String,
             require:true,
         }
-    }]
+    }],
+    location:{
+        type:Object
+    }
  })
 newSchema.methods.generateToken=async function(){
     try{
        
-        const token=await jwt.sign({_id:this._id},"secretkeyjwt",{
+        const token=await jwt.sign({_id:this._id},process.env.SECRETKEY_JWT,{
             expiresIn:"15 days"
         })
         this.tokens=this.tokens.concat({token:token})
@@ -47,9 +50,12 @@ newSchema.methods.generateToken=async function(){
     }
 }
 newSchema.pre("save",async function(next){
-    this. password_signup=await bcrypt.hash(this.password_signup,5)
-    console.log(`${this.password_signup}`)
-    next(); 
+    if(this.isModified("password_signup")){
+        console.log(this.password_signup)
+        this. password_signup=await bcrypt.hash(this.password_signup,5)
+        console.log(this.password_signup)
+        next(); 
+    }
 })
 const Signup=new mongoose.model('Signup',newSchema)
  module.exports=Signup

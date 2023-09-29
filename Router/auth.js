@@ -4,13 +4,14 @@ const Signup = require('../DB/Signup');
 const router=express.Router();
 const googlesso=require('./googlesso.js')
 const passport=require('passport')
+const Razorpay = require('razorpay')
+
+
 require('dotenv').config()
-
-
 //GET
 router.get("/",(req,res)=>{
     res.render('start')
-    console.log("DONE")
+    console.log("/")
 })
 
 router.get("/login",(req,res)=>{
@@ -36,21 +37,9 @@ router.get("/Help",(req,res)=>{
 })
 
 router.get("/cart",(req,res)=>{
-    var instance = new Razorpay({ key_id:process.env.KEY , key_secret: process.env.KEY_SEC })
-    var options = {
-        amount: 250000,  // amount in the smallest currency unit
-        currency: "INR",
-        receipt: "order_rcptid_11"
-      };
-      instance.orders.create(options, function(err, order) {
-        console.log(order);
-        res.send({orderId:order.id})
-      });
-
     res.render('cart')
     console.log("DONE")
     })
-
 
 router.get("/search",(req,res)=>{
     res.render('search')
@@ -61,9 +50,7 @@ router.get("/service/tiffin",(req,res)=>{
     res.render('tiffin')
 })
 
-router.get("/profile",(req,res)=>{
-    res.render('profile')
-})
+
 
 router.get("/user",async (req,res)=>{
     const user=await Signup.find({},{})

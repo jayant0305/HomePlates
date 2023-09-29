@@ -204,33 +204,36 @@ button{
     margin-top: 17px;
     width: 160px;
     height: 40px;
+    border: #0002 2px;
 }
 .locate_metext{
     position: absolute;
     display: inline;
     font-size: 14px;
     font-weight: 500;
-    color:#686b78;
+    color: #686b78;
     margin-top: -16px;
+    margin-left: 0px;
     
 }
 .location_img{
     position: absolute;
-    margin-left: 48px;
-    margin-top: -20px ;
+    margin-left: -32px;
+    margin-top: -20px;
 }
 .findfood{
-    display: inline-block;
+    display: inline;
     position: absolute;
     width: 120px;
-    height:39px;
-    padding-left: 30px;
-    padding-top: 20px;
+    height: 49px;
+    padding-left: 10px;
+    padding-top: 2px;
     background-color: #196cfc;
     color: white;
     font-size: 16px;
     font-weight: 600;
-    margin-left: -1px;
+    margin-left: 449px;
+    margin-top: -57px;
 }
 .pop_cities{
     color:#a9abb2;
