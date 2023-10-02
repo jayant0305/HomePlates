@@ -5,8 +5,8 @@ const router=express.Router();
 const googlesso=require('./googlesso.js')
 const passport=require('passport')
 const Razorpay = require('razorpay')
-
-
+const foodItem=require('../DB/Food-items')
+const tiffinItem=require('../DB/Tiffin-items')
 require('dotenv').config()
 //GET
 router.get("/",(req,res)=>{
@@ -24,13 +24,19 @@ router.get("/signup",(req,res)=>{
 })
 
 router.get("/home",(req,res)=>{
-    res.render('home')
+    foodItem.find().then(function(menu){
+        res.render('home', {menu:menu})
+    })
+    
     console.log("DONE")
 })
 router.get("/service",(req,res)=>{
-    res.render('service')
+    foodItem.find().then(function(menu){
+        res.render('service', {menu:menu})
+    })
     console.log("DONE")
 })
+
 router.get("/Help",(req,res)=>{
     res.render('help')
     console.log("DONE")
@@ -47,10 +53,10 @@ router.get("/search",(req,res)=>{
 })
 
 router.get("/service/tiffin",(req,res)=>{
-    res.render('tiffin')
+    tiffinItem.find().then(function(menu){
+        res.render('tiffin', {menu:menu})
+    })
 })
-
-
 
 router.get("/user",async (req,res)=>{
     const user=await Signup.find({},{})

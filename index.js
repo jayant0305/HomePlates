@@ -7,6 +7,8 @@ const dotenv=require('dotenv')
 dotenv.config({path:'./src/config.env'});
 const Login=require('./DB/Login')
 const Signup=require('./DB/Signup')
+const foodItem=require('./DB/Food-items')
+const tiffinItem=require('./DB/Tiffin-items')
 const bcrypt=require('bcryptjs')
 const async = require('hbs/lib/async')
 const { Sign } = require('crypto')
@@ -15,17 +17,18 @@ const PORT=process.env.PORT ||5164
 const jwt=require('jsonwebtoken')
 const cookieParser=require("cookie-parser")
 const jwtauth=require('./Middleware/jwtmiddleware')
-
 const googlesso=require('./Router/googlesso')
 const { Console } = require('console')
 const { use } = require('passport')
+
+
 const public_path=path.join(__dirname,"/public")
 const views_path=path.join(__dirname,"/Templateengine/views")
 const partials_path=path.join(__dirname,"/Templateengine/partials")
 
 App.use(require('./Router/auth'))
 App.use(cookieParser())
-App.use(express.urlencoded())
+App.use(express.urlencoded({extended:true}))
 App.use(express.static(public_path))
 App.set('view engine','hbs')
 App.set('views',views_path)
@@ -37,6 +40,47 @@ App.use(express.json())
 DB();
 
 // POST
+App.post("/addFoodItem",async(req,res)=>{
+    try{
+            console.log(req.body.name)
+            const foodItemInstance= new foodItem({
+            name:req.body.name,
+            image:req.body.image,
+            pricePerPerson:req.body.pricePerPerson,
+            deliveryTime:req.body.deliveryTime,
+            price:req.body.price,
+            subCategory:req.body.subCategory,
+            rating:req.body.rating
+       })
+        const val=await foodItemInstance.save()
+        res.json(val)   
+    }
+    catch(error){
+        console.log(error)
+    }
+    
+})
+App.post("/addTiffinItem",async(req,res)=>{
+    try{
+            console.log(req.body.name)
+            const tiffinItemInstance= new tiffinItem({
+            name:req.body.name,
+            image:req.body.image,
+            pricePerPerson:req.body.pricePerPerson,
+            deliveryTime:req.body.deliveryTime,
+            price:req.body.price,
+            subCategory:req.body.subCategory,
+            rating:req.body.rating
+       })
+        const val=await tiffinItemInstance.save()
+        res.json(val)   
+    }
+    catch(error){
+        console.log(error)
+    }
+    
+})
+
 App.post("/login",async(req,res)=>{
     try {
       const user=await Signup.findOne({phone_signup:req.body.phone})

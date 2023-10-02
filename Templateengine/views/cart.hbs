@@ -2,13 +2,19 @@
     <head>
         <link rel="stylesheet" href="/CSS/home.css">
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
-           
+        <script src="/JS/cart.js"></script>
     </head>
     <title></title>
     <body>
-        {{>nav}}
-        
-                  
+        {{>nav}}  
+
+        <ul class="item" id="item">
+            <li class="item-cart">
+                <div class="item-name">ItemName</div>
+                <div class="item-price">Price</div>
+            </li>
+        </ul> 
+        <div class="totalPrice" id="totalPrice">200</div>   
     </body>
 </html>
 
