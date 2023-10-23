@@ -2,19 +2,31 @@
     <head>
         <link rel="stylesheet" href="/CSS/home.css">
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
-        <script src="/JS/cart.js"></script>
+        <script src="/public/JS/cart.js"></script>
     </head>
     <title></title>
     <body>
         {{>nav}}  
-
-        <ul class="item" id="item">
+        <ul class="item" id="item" style="margin-top: 100px;">
             <li class="item-cart">
-                <div class="item-name">ItemName</div>
+                <div class="item-name">Item name </div>
                 <div class="item-price">Price</div>
             </li>
+        </ul>
+        {{#each carts}}
+        <ul class="item" id="item" style="margin-top: 20px;">
+            <li class="item-cart" >
+                <div class="item-name">{{this.cart.name}}</div>
+                <div class="item-price">{{this.cart.price}}</div>
+            </li>
         </ul> 
-        <div class="totalPrice" id="totalPrice">200</div>   
+        {{/each}}
+
+        <div class="totalPrice" id="totalPrice">TOTAL : {{purschase}}</div>   
+
+        <div class="Pay">
+            <button class="ReadyToPay">Ready To Pay {{purschase}}</button>
+        </div>
     </body>
 </html>
 

@@ -26,15 +26,15 @@
                     <div class="sub_dyntext">Implying the comfort and warmth of a home-cooked meal.</div>
 
 
-                    <div class="location_box">
+                     <div class="location_box">
                         <input type="text" id="inputtext" placeholder="Enter your delivery location" class="inputtext"/>
-                        <button class="locate_me">
-                        <div class="location_img">
+                        <button class="locate_me" onclick="Currentlocation()">
+                        <span class="location_img" >
                             <img src="/Images/location.png" width="25px" height="25px">
-                        </div>
-                        <div class="locate_metext">Locate me</div>
+                        </span>
+                        <span class="locate_metext" >Locate me</span>
                         </button>
-                        <div class="findfood">FIND FOOD</div>
+                        <button class="findfood" >FIND FOOD</button>
                     </div>
                     {{!-- JS --}}
                     <script>
@@ -81,7 +81,7 @@
 
                     {{!-- SIGN UP --}}
                     <form class="open_popup"  method="POST" action="/signup">
-                        <a type="button" class="close" href="/">close</a>
+                        <a type="button" class="close" href="/">X</a>
                         <h2 class="text_login">Sign up</h2>
                         <h2 class="text_or">or</h2>
                         <a class="text_createaccount" href="/login">login to your account</a>

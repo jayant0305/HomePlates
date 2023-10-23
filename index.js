@@ -13,7 +13,7 @@ const bcrypt=require('bcryptjs')
 const async = require('hbs/lib/async')
 const { Sign } = require('crypto')
 const Razorpay = require('razorpay');
-const PORT=process.env.PORT ||5164 
+const PORT=process.env.PORT ||5164
 const jwt=require('jsonwebtoken')
 const cookieParser=require("cookie-parser")
 const jwtauth=require('./Middleware/jwtmiddleware')
@@ -131,7 +131,7 @@ App.post("/signup",async(req,res)=>{
         const token=await newSignup.generateToken()
         console.log("Token Generate-signup "+token)
         res.cookie("JWTtoken",token,{
-            expires:new Date(Date.now()+500000),
+            expires:new Date(Date.now()+1000000),
             httpOnly:true
         })
         res.redirect('/profile')
@@ -154,6 +154,40 @@ App.get("/profile",jwtauth,async(req,res)=>{
     }
     else{
         res.render('profile')
+    }
+})
+
+App.get("/cart",jwtauth,async(req,res)=>{
+    if(res.locals.user!=null){
+        const userID=await res.locals.user
+        let totalAmount = 0;
+        res.locals.user.carts.forEach((Mycart) => {
+            totalAmount = totalAmount + Mycart.cart.price
+        });
+        console.log(totalAmount)
+        userID.purchase =totalAmount
+        await userID.save()
+        res.render('cart',{carts:res.locals.user.carts,purschase:userID.purchase})
+    }
+    else{
+        console.log("NO RESPONSE")
+        res.render('cart',{purschase:0})
+    }
+    
+})
+
+App.post("/cart/:id",jwtauth,async(req,res)=>{
+    console.log(req.params.id)
+    const Id=req.params.id
+    const food=await foodItem.findOne({_id:Id})
+
+    if(res.locals.user!=null){
+        const userID=await res.locals.user
+        userID.carts=userID.carts.concat({cart:food})
+        await userID.save()
+    }
+    else{
+        res.redirect('/login')
     }
 })
 

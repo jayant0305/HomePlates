@@ -6,6 +6,15 @@
         <script async
             src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAKJrCRSoFqfQkrqLzUj5lJeLJ6JfqMZGI&libraries=places">
         </script>
+        <script>
+            let dynamicText=["Home taste?","Hungry","HomeSeek?"]
+            const dynText=document.getElementById('dyntext')
+            dynamicText.forEach(
+            
+            dynamicText.forEach((value)=>{
+            console.log(value)})
+
+        </script>
         
     </head>
     <title>HomePaltes</title>
@@ -24,7 +33,8 @@
                     
                     <a type="button" class="signup" href="/signup">Sign up</a>
 
-                    <div class="dyntext">Home Taste?</div>
+                    <div class="dyntext" id="dyntext">HUNGRY ?</div>
+                        
                     <div class="sub_dyntext">Implying the comfort and warmth of a home-cooked meal.</div>
 
 
@@ -36,8 +46,9 @@
                         </span>
                         <span class="locate_metext" >Locate me</span>
                         </button>
+                        <button class="findfood" >FIND FOOD</button>
                     </div>
-                    <button class="findfood" >FIND FOOD</button>
+                    
                     <div>
                         <h3 class="pop_cities">POPULAR CITIES IN INDIA</h3>
                         <ul class="list">

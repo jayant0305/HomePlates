@@ -42,11 +42,6 @@ router.get("/Help",(req,res)=>{
     console.log("DONE")
 })
 
-router.get("/cart",(req,res)=>{
-    res.render('cart')
-    console.log("DONE")
-    })
-
 router.get("/search",(req,res)=>{
     res.render('search')
     console.log("DONE")

@@ -32,6 +32,15 @@ const newSchema=new mongoose.Schema({
     }],
     location:{
         type:Object
+    },
+    carts:[{
+        cart:{
+            type:Object
+        }
+    }],
+    purchase:{
+        type:Number,
+        default:0
     }
  })
 newSchema.methods.generateToken=async function(){

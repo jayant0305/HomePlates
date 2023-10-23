@@ -50,10 +50,11 @@
     visibility: hidden;
 }
 .close{
-    
-    margin-top: 40px;
-    margin-left: 25px;
+    margin-top: 80px;
+    margin-left: 355px;
     content: "\E913";
+    text-decoration: none;
+    font-size: 20px;
 }
 .text_login{
     font-size: 30px;
@@ -225,15 +226,15 @@ button{
     display: inline;
     position: absolute;
     width: 120px;
-    height: 49px;
+    height: 57px;
     padding-left: 10px;
     padding-top: 2px;
     background-color: #196cfc;
     color: white;
     font-size: 16px;
     font-weight: 600;
-    margin-left: 449px;
-    margin-top: -57px;
+    margin-left: px;
+    margin-top: 1px;
 }
 .pop_cities{
     color:#a9abb2;
