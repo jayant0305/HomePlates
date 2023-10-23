@@ -20,6 +20,7 @@ const jwtauth=require('./Middleware/jwtmiddleware')
 const googlesso=require('./Router/googlesso')
 const { Console } = require('console')
 const { use } = require('passport')
+const TiffinItems = require('./DB/Tiffin-items')
 
 
 const public_path=path.join(__dirname,"/public")
@@ -176,7 +177,7 @@ App.get("/cart",jwtauth,async(req,res)=>{
     
 })
 
-App.post("/cart/:id",jwtauth,async(req,res)=>{
+App.post("/cart/restaurants/:id",jwtauth,async(req,res)=>{
     console.log(req.params.id)
     const Id=req.params.id
     const food=await foodItem.findOne({_id:Id})
@@ -184,6 +185,21 @@ App.post("/cart/:id",jwtauth,async(req,res)=>{
     if(res.locals.user!=null){
         const userID=await res.locals.user
         userID.carts=userID.carts.concat({cart:food})
+        await userID.save()
+    }
+    else{
+        res.redirect('/login')
+    }
+})
+
+App.post("/cart/tiffin/:id",jwtauth,async(req,res)=>{
+    console.log(req.params.id)
+    const Id=req.params.id
+    const tiffin=await tiffinItem.findOne({_id:Id})
+
+    if(res.locals.user!=null){
+        const userID=await res.locals.user
+        userID.carts=userID.carts.concat({cart:tiffin})
         await userID.save()
     }
     else{

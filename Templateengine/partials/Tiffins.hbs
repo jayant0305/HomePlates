@@ -1,5 +1,5 @@
  {{#each menu}}
- <div class="blocks">
+<form class="blocks" method="POST" action="/cart/tiffin/{{this.id}}">
         <img class="block_img" src="/Images/{{this.image}}" width="100%" height="100%">
         <div class="block_title">{{this.name}}</div>
         <div class="block_sub_title">{{this.subCategory}}</div>
@@ -8,7 +8,7 @@
         <div class="per_head">{{this.pricePerPerson}}</div>
         <div class="quickview">QUICK VIEW</div>
         <button class="addButton">Add</button>
-</div>
+</form>
 {{/each}}
             {{!-- <div class="blocks">
                     <img class="block_img" src="/Images/Tiffin2.jpg" width="100%" height="100%">
