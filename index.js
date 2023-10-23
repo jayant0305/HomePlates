@@ -21,6 +21,7 @@ const googlesso=require('./Router/googlesso')
 const { Console } = require('console')
 const { use } = require('passport')
 const TiffinItems = require('./DB/Tiffin-items')
+const { exit } = require('process')
 
 
 const public_path=path.join(__dirname,"/public")
@@ -167,7 +168,7 @@ App.get("/cart",jwtauth,async(req,res)=>{
         });
         console.log(totalAmount)
         userID.purchase =totalAmount
-        await userID.save()
+        const save=await userID.save()
         res.render('cart',{carts:res.locals.user.carts,purschase:userID.purchase})
     }
     else{
@@ -178,32 +179,46 @@ App.get("/cart",jwtauth,async(req,res)=>{
 })
 
 App.post("/cart/restaurants/:id",jwtauth,async(req,res)=>{
+    try{
     console.log(req.params.id)
     const Id=req.params.id
     const food=await foodItem.findOne({_id:Id})
-
     if(res.locals.user!=null){
         const userID=await res.locals.user
         userID.carts=userID.carts.concat({cart:food})
-        await userID.save()
+        const save=await userID.save()
+        res.status(204).send()
     }
     else{
         res.redirect('/login')
+        return 
+    }
+
+    }
+    catch(err){
+        res.render('start')
+        return 
     }
 })
 
 App.post("/cart/tiffin/:id",jwtauth,async(req,res)=>{
+    try{
     console.log(req.params.id)
     const Id=req.params.id
     const tiffin=await tiffinItem.findOne({_id:Id})
 
     if(res.locals.user!=null){
-        const userID=await res.locals.user
-        userID.carts=userID.carts.concat({cart:tiffin})
-        await userID.save()
+        const userID=res.locals.user
+        userID.carts=await userID.carts.concat({cart:tiffin})
+        const save=await userID.save()
+        res.status(204).send()
     }
     else{
         res.redirect('/login')
+    }
+    }
+    catch (err){
+        return 
     }
 })
 
