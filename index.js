@@ -13,7 +13,7 @@ const bcrypt=require('bcryptjs')
 const async = require('hbs/lib/async')
 const { Sign } = require('crypto')
 const Razorpay = require('razorpay');
-const PORT=process.env.PORT |2000
+const PORT=process.env.PORT |1100
 const jwt=require('jsonwebtoken')
 const cookieParser=require("cookie-parser")
 const jwtauth=require('./Middleware/jwtmiddleware')
@@ -21,8 +21,6 @@ const googlesso=require('./Router/googlesso')
 const { Console } = require('console')
 const { use } = require('passport')
 const TiffinItems = require('./DB/Tiffin-items')
-const { exit } = require('process')
-
 
 const public_path=path.join(__dirname,"/public")
 const views_path=path.join(__dirname,"/Templateengine/views")
@@ -40,6 +38,14 @@ App.use(express.json())
 
 // Connecting DB
 DB();
+
+
+//INSTANTIATE RAZORPAY
+var instance = new Razorpay({
+    key_id: process.env.KEY,
+    key_secret: process.env.KEY_SEC,
+  });
+
 
 // POST
 App.post("/addFoodItem",async(req,res)=>{
@@ -96,7 +102,7 @@ App.post("/login",async(req,res)=>{
         const token=await user.generateToken()
         console.log ("token generated in /login : "+ token)
         res.cookie("JWTtoken",token,{
-        expires:new Date(Date.now()+500000),
+        expires:new Date(Date.now()+10000000),
         httpOnly:true
         })
         res.status(201)
@@ -163,13 +169,13 @@ App.get("/cart",jwtauth,async(req,res)=>{
     if(res.locals.user!=null){
         const userID=await res.locals.user
         let totalAmount = 0;
-        res.locals.user.carts.forEach((Mycart) => {
-            totalAmount = totalAmount + Mycart.cart.price
-        });
+        // res.locals.user.carts.forEach((Mycart) => {
+        //     totalAmount = totalAmount + Mycart.cart.price
+        // });
         console.log(totalAmount)
         userID.purchase =totalAmount
-        const save=await userID.save()
-        res.render('cart',{carts:res.locals.user.carts,purschase:userID.purchase})
+        const save=await userID.save()        
+        res.render('cart',{carts:res.locals.user.carts,purschase:userID.purchase,userName:userID.name_signup})
     }
     else{
         console.log("NO RESPONSE")
@@ -178,26 +184,39 @@ App.get("/cart",jwtauth,async(req,res)=>{
     
 })
 
-App.post("/cart/restaurants/:id",jwtauth,async(req,res)=>{
-    try{
-    console.log(req.params.id)
-    const Id=req.params.id
-    const food=await foodItem.findOne({_id:Id})
+App.post('/cart',jwtauth,async(req,res)=>{
     if(res.locals.user!=null){
         const userID=await res.locals.user
-        const quantity=req.body.quantity
-        console.log(quantity)
-        userID.carts=userID.carts.concat({cart:food})
-        const save=await userID.save()
-        res.status(204).send()
+        var options = {
+            amount: req.body.amount,  // amount in the smallest currency unit
+            currency: "INR",
+            receipt: "order_rcptid_11"
+        };
+        instance.orders.create(options, function(err, order) {
+            // console.log("order: ",order);
+            res.send({orderId:order.id});
+        });
     }
-    else{
-        res.redirect('/login')
-        return 
+})
+
+App.post("/cart/restaurants/:id",jwtauth,async(req,res)=>{
+    try{
+    const Id=req.params.id
+    const food=await foodItem.findOne({_id:Id})
+    if (res.locals.user !== null) {
+        const userID = await Signup.findById(res.locals.user);
+        userID.carts.push({ cart: food},{quantity: 1});    
+        const saveResult = await userID.save();
+        res.status(204).send();
+        console.log("Saved",userID.carts)
+    } else {
+        console.log("login")
+        res.redirect('/login');
     }
 
     }
     catch(err){
+        console.log(err)
         res.render('start')
         return 
     }

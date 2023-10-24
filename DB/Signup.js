@@ -35,7 +35,11 @@ const newSchema=new mongoose.Schema({
     },
     carts:[{
         cart:{
-            type:Object
+            type:Object,
+        },
+        quantity:{
+            type:Number,
+            default:0
         }
     }],
     purchase:{

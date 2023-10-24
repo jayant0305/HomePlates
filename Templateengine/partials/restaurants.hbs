@@ -22,8 +22,8 @@
             document.getElementById('form' + index).submit(); // Perform the POST request here
             minus.style.display = "inline-block";
         } else {
-            document.getElementById('form' + index).submit();
             element.innerHTML = value + 1;
+            document.getElementById('form' + index).submit();
         }
         if (element.innerHTML === 'Add') {
             minus.style.display = "none";
