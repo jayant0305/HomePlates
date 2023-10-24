@@ -19,8 +19,8 @@
             <div class="item-name">{{this.cart.name}}</div>
             <div class="item-price" id="price{{@index}}">{{this.cart.price}}</div>
             <button class="addItemButton" onclick="addQuantity(this, {{this.cart.price}}, {{@index}})">+</button>
-            <div class="quantity" id="quantity{{@index}}">{{this.quantity}}</div>
-            <button class="addItemButton" onclick="subQuantity(this, {{this.cart.price}}, {{@index}})">-</button>
+            <div class="quantity" id="quantity{{@index}}">{{this.cart.quantity}}</div>
+            <button class="addItemButton" onclick="subQuantity(this, {{this.cart.total}}, {{@index}})">-</button>
         </li>
     </ul>
     {{/each}}

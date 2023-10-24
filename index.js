@@ -13,7 +13,7 @@ const bcrypt=require('bcryptjs')
 const async = require('hbs/lib/async')
 const { Sign } = require('crypto')
 const Razorpay = require('razorpay');
-const PORT=process.env.PORT |1100
+const PORT=process.env.PORT |1906
 const jwt=require('jsonwebtoken')
 const cookieParser=require("cookie-parser")
 const jwtauth=require('./Middleware/jwtmiddleware')
@@ -171,8 +171,7 @@ App.get("/cart",jwtauth,async(req,res)=>{
         let totalAmount = 0;
         // res.locals.user.carts.forEach((Mycart) => {
         //     totalAmount = totalAmount + Mycart.cart.price
-        // });
-        console.log(totalAmount)
+        // })
         userID.purchase =totalAmount
         const save=await userID.save()        
         res.render('cart',{carts:res.locals.user.carts,purschase:userID.purchase,userName:userID.name_signup})
@@ -201,19 +200,44 @@ App.post('/cart',jwtauth,async(req,res)=>{
 
 App.post("/cart/restaurants/:id",jwtauth,async(req,res)=>{
     try{
-    const Id=req.params.id
-    const food=await foodItem.findOne({_id:Id})
-    if (res.locals.user !== null) {
-        const userID = await Signup.findById(res.locals.user);
-        userID.carts.push({ cart: food},{quantity: 1});    
-        const saveResult = await userID.save();
-        res.status(204).send();
-        console.log("Saved",userID.carts)
-    } else {
-        console.log("login")
-        res.redirect('/login');
-    }
-
+        if (res.locals.user !== null) {
+            const Id=req.params.id
+            const food=await foodItem.findOne({_id:Id})
+            const userID = await res.locals.user
+            const itemIndex = userID.carts.findIndex(item => item.cart && item.cart._id && item.cart._id.toString() === Id);
+            console.log(`itemIndex: ${itemIndex}`)
+            if(itemIndex !==-1) {
+                //found
+                const result=await Signup.updateOne({_id:userID._id},{
+                    $inc:{["carts."+ itemIndex+".cart.quantity"]:1}
+                })
+                const total=userID.carts[itemIndex].cart.price*userID.carts[itemIndex].cart.quantity
+                const totalUpdated=await Signup.updateOne({_id:userID._id},{
+                    $set:{["carts."+ itemIndex+".cart.total"]:total}
+                })
+                console.log(userID.carts[itemIndex].cart.total)
+            }else{
+                //not found
+                userID.carts=userID.carts.concat({ cart: food}) 
+                userID.carts.length-1
+                const result1=await Signup.updateOne(
+                    { _id: userID},
+                    { $push: { carts:food } }
+                 )
+                 await userID.save();
+                 const result2=await Signup.updateOne(
+                    { _id: userID,"carts.cart._id":food._id},
+                    { $inc: { "carts.$.cart.total": food.price }}
+                 )
+                await userID.save();
+                console.log(userID.carts)
+            }
+            
+            res.status(204).send();
+        } else {
+            console.log("login")
+            res.redirect('/login');
+        }
     }
     catch(err){
         console.log(err)
@@ -253,7 +277,6 @@ App.post("/clearcart",jwtauth,async(req,res)=>{
             { _id: res.locals.user._id }, 
             { $set: { carts: [] } } 
         );
-        console.log(res.locals.user.carts)
     }
     else{
         res.redirect('/login')

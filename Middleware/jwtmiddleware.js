@@ -8,8 +8,6 @@ const jwtauth=async(req,res,next)=>{
         const token_ID=await Signup.findOne({_id:verifyUser._id})
         const user=await Signup.findOne({_id:token_ID._id})
         res.locals.user = user;  
-        console.log(res.locals.user.name_signup)
-        
         next()
     }
     catch(error){

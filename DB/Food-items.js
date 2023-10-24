@@ -25,6 +25,14 @@ const newSchema=new mongoose.Schema({
     },
     rating:{
         type:String
+    },
+    quantity:{
+        type:Number,
+        default:1
+    },
+    total:{
+        type:Number,
+        default:0
     }
  })
 const foodItems=new mongoose.model('Food-items',newSchema)
