@@ -1,12 +1,48 @@
 {{#each menu}}
-<form class="blocks" method="POST" action="/cart/restaurants/{{this.id}}">
-        <img class="block_img" src="/Images/{{this.image}}" width="100%" height="100%">
-        <div class="block_title">{{this.name}}</div>
-        <div class="block_sub_title">{{this.subCategory}}</div>
-        <div class="rating">* {{this.rating}}</div>
-        <div class="delivery_time">.  {{this.deliverTime}}</div>
-        <div class="per_head">{{this.pricePerPerson}}</div>
-        <div class="quickview">QUICK VIEW</div>
-        <button class="addButton">Add</button>
+<form class="blocks" id="form{{@index}}" method="POST" action="/cart/restaurants/{{this.id}}">
+    <img class="block_img" src="/Images/{{this.image}}" width="100%" height="100%">
+    <div class="block_title">{{this.name}}</div>
+    <div class="block_sub_title">{{this.subCategory}}</div>
+    <div class="rating">* {{this.rating}}</div>
+    <div class="delivery_time">.  {{this.deliverTime}}</div>
+    <div class="per_head">{{this.pricePerPerson}}</div>
+    <div class="quickview">QUICK VIEW</div>
+    <button class="minusButton" id="minus{{@index}}" onclick="subQuantity(event, {{@index}})">--</button>
+    <button class="addButton" id="addButton{{@index}}" onclick="Add(event,{{@index}})" value="quantity">Add</button>
 </form>
+
+<script>
+    function Add(event, index,) {
+        event.preventDefault();
+        let element = document.getElementById("addButton" + index);
+        let minus = document.getElementById("minus" + index);
+        let value = parseInt(element.innerHTML);
+        if (isNaN(value)) {
+            element.innerHTML = 1;
+            document.getElementById('form' + index).submit(); // Perform the POST request here
+            minus.style.display = "inline-block";
+        } else {
+            document.getElementById('form' + index).submit();
+            element.innerHTML = value + 1;
+        }
+        if (element.innerHTML === 'Add') {
+            minus.style.display = "none";
+        }
+    }
+
+    function subQuantity(event, index) {
+        event.preventDefault();
+        let element = document.getElementById("addButton" + index);
+        let minus = document.getElementById("minus" + index);
+        let value = parseInt(element.innerHTML);
+        if (!isNaN(value) && value > 1) {
+            element.innerHTML = value - 1;
+            document.getElementById('form' + index).submit(); // Perform the POST request here
+        }
+        if (element.innerHTML === 'Add') {
+            minus.style.display = "none";
+            document.getElementById('form' + index).submit();
+        }
+    }
+</script>
 {{/each}}

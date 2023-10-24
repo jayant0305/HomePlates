@@ -13,7 +13,7 @@ const bcrypt=require('bcryptjs')
 const async = require('hbs/lib/async')
 const { Sign } = require('crypto')
 const Razorpay = require('razorpay');
-const PORT=process.env.PORT ||5164
+const PORT=process.env.PORT |2000
 const jwt=require('jsonwebtoken')
 const cookieParser=require("cookie-parser")
 const jwtauth=require('./Middleware/jwtmiddleware')
@@ -185,6 +185,8 @@ App.post("/cart/restaurants/:id",jwtauth,async(req,res)=>{
     const food=await foodItem.findOne({_id:Id})
     if(res.locals.user!=null){
         const userID=await res.locals.user
+        const quantity=req.body.quantity
+        console.log(quantity)
         userID.carts=userID.carts.concat({cart:food})
         const save=await userID.save()
         res.status(204).send()
@@ -205,11 +207,15 @@ App.post("/cart/tiffin/:id",jwtauth,async(req,res)=>{
     try{
     console.log(req.params.id)
     const Id=req.params.id
+    const quantity=req.body.quantity
+        console.log(quantity)
     const tiffin=await tiffinItem.findOne({_id:Id})
 
     if(res.locals.user!=null){
         const userID=res.locals.user
         userID.carts=await userID.carts.concat({cart:tiffin})
+        userID.carts[userID.carts.length-1].quantity=1
+        console.log(userID.carts[userID.carts.length-1])
         const save=await userID.save()
         res.status(204).send()
     }
@@ -220,6 +226,20 @@ App.post("/cart/tiffin/:id",jwtauth,async(req,res)=>{
     catch (err){
         return 
     }
+})
+
+App.post("/clearcart",jwtauth,async(req,res)=>{
+    if(res.locals.user!=null){
+        await Signup.updateOne(
+            { _id: res.locals.user._id }, 
+            { $set: { carts: [] } } 
+        );
+        console.log(res.locals.user.carts)
+    }
+    else{
+        res.redirect('/login')
+    }
+    res.status(204).redirect('/cart')
 })
 
 App.use((req,res)=>{

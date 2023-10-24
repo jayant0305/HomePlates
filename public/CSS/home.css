@@ -230,6 +230,15 @@
     padding-left: 5px;
     padding-top: 1px;
 }
+.minusButton{
+    position: absolute;
+    margin-top: 58px;
+    margin-left: -20px;
+    background-color: #19cbfc;
+    color: white;
+    width: 20px;
+    display: none;
+}
 
 
 .profile_name{
@@ -311,13 +320,13 @@
 .totalPrice{
     background-color: #171a29;
     color: white;
-    font-size: 30px;
-    font-weight: 400;
+    /* font-size: 30px; */
+    /* font-weight: 400; */
     text-align: right;
-    padding-top:7px;
-    padding-right:20px;
+    /* padding-top:7px; */
+    /* padding-right:20px; */
     margin-left: 110px; ;
-    margin-top: 20px;
+    margin-top: 20px; 
     height: 40px;
     width: 950px;
 }
@@ -334,4 +343,17 @@
     font-weight: 400;
     margin-left: 2px;
     margin-right: 2px;
+}
+.clearcart{
+    background-color: white;
+    color:#171a29;
+    font-size: 15px;
+    font-weight: 600;
+    display: flex;
+    justify-content: left;
+    padding-top:10px;
+    padding-right:20px;
+    margin-left: 10px; ;
+    margin-top: 20px; 
+    align-items: center;
 }

@@ -1,36 +1,58 @@
 <html>
-    <head>
-        <link rel="stylesheet" href="/CSS/home.css">
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
-        <script src="/public/JS/cart.js"></script>
-    </head>
-    <title></title>
-    <body>
-        {{>nav}}  
-        <ul class="item" id="item" style="margin-top: 100px;">
-            <li class="item-cart">
-                <div class="item-name">Item name </div>
-                <div class="item-price">Price</div>
-            </li>
-        </ul>
-        {{#each carts}}
-        <ul class="item" id="item" style="margin-top: 20px;">
-            <li class="item-cart" >
-                <div class="item-name">{{this.cart.name}}</div>
-                <div class="item-price">{{this.cart.price}}</div>
-                <button class="addItemButton" >+</button>
-                <div class="quantity">{{this.cart.quantity}}</div>
-                <button class="addItemButton">-</button>
-            </li>
-        </ul> 
-        {{/each}}
+<head>
+    <link rel="stylesheet" href="/CSS/home.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+    <script src="/public/JS/cart.js"></script>
+</head>
+<title></title>
+<body>
+    {{>nav}}  
+    <ul class="item" id="item" style="margin-top: 100px;">
+        <li class="item-cart">
+            <div class="item-name" style="font-weight:600">Item name </div>
+            <div class="item-price" style="margin-left:60px">Price</div>
+        </li>
+    </ul>
+    {{#each carts}}
+    <ul class="item" style="margin-top: 20px;">
+        <li class="item-cart">
+            <div class="item-name">{{this.cart.name}}</div>
+            <div class="item-price" id="price{{@index}}">{{this.cart.price}}</div>
+            <button class="addItemButton" onclick="addQuantity(this, {{this.cart.price}}, {{@index}})">+</button>
+            <div class="quantity" id="quantity{{@index}}">{{this.cart.quantity}}</div>
+            <button class="addItemButton" onclick="subQuantity(this, {{this.cart.price}}, {{@index}})">-</button>
+        </li>
+    </ul>
+    {{/each}}
 
-        <div class="totalPrice" id="totalPrice">TOTAL : {{purschase}}</div>   
+    <form method="POST" action="/clearcart" id="totalPrice" class="totalPrice">
+        <button class="clearcart"> CLEAR CART</button>
+        <div style="color: white;display: absolute;justify-content: right;margin-top: -30px;font-size:20px;font-weight:600;">TOTAL : {{purschase}}</div></form>
 
-        <div class="Pay">
-            <button class="ReadyToPay">Ready To Pay {{purschase}}</button>
-        </div>
-    </body>
+    <div class="Pay">
+        <button class="ReadyToPay">Ready To Pay {{purschase}}</button>
+    </div>
+
+    <script>
+        function addQuantity(element, price, index) {
+            let quantityElement = document.getElementById("quantity" + index);
+            let priceElement = document.getElementById("price" + index);
+            let quantity = parseInt(quantityElement.innerHTML) || 0; // Default to 0 if the innerHTML is not a number
+            quantity += 1;
+            quantityElement.innerHTML = quantity;
+            priceElement.innerHTML = quantity * price;
+        }
+
+        function subQuantity(element, price, index) {
+            let quantityElement = document.getElementById("quantity" + index);
+            let priceElement = document.getElementById("price" + index);
+            let quantity = parseInt(quantityElement.innerHTML) || 0; // Default to 0 if the innerHTML is not a number
+            if (quantity > 1) {
+                quantity -= 1;
+            }
+            quantityElement.innerHTML = quantity;
+            priceElement.innerHTML = quantity * price;
+        }
+    </script>
+</body>
 </html>
-
-
