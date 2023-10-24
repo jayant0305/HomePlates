@@ -346,22 +346,15 @@
     margin-right: 2px;
 }
 .clearcart{
-    background-color: white;
-    color: #171a29;
-    font-size: 15px;
-    font-weight: 600;
-    display: inline;
-    justify-content: left;
-    /* padding-top: 10px; */
-    /* padding-right: 9px; */
-    margin-right: 800px;
-    margin-top: 3px;
-    /* border-radius: 3px; */
-    border-color: none;
-    border-radius: 12px;
-    text-align: center;
-    height: 35px;
-    width: 120;
+    background: white;
+    border-radius: 14px;
+    width: 107px;
+    height: 33px;
+    margin-right: 600px;
+    margin-top: 19px;
+    padding-top: 10px;
+    padding-bottom: 25px;
+    display: list-item;
 }
 .clearcart:hover{
     background-color: #19cbfc;

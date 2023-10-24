@@ -169,9 +169,9 @@ App.get("/cart",jwtauth,async(req,res)=>{
     if(res.locals.user!=null){
         const userID=await res.locals.user
         let totalAmount = 0;
-        // res.locals.user.carts.forEach((Mycart) => {
-        //     totalAmount = totalAmount + Mycart.cart.price
-        // })
+        res.locals.user.carts.forEach((Mycart) => {
+            totalAmount = totalAmount + Mycart.cart.total
+        })
         userID.purchase =totalAmount
         const save=await userID.save()        
         res.render('cart',{carts:res.locals.user.carts,purschase:userID.purchase,userName:userID.name_signup})
@@ -204,18 +204,22 @@ App.post("/cart/restaurants/:id",jwtauth,async(req,res)=>{
             const Id=req.params.id
             const food=await foodItem.findOne({_id:Id})
             const userID = await res.locals.user
-            const itemIndex = userID.carts.findIndex(item => item.cart && item.cart._id && item.cart._id.toString() === Id);
+            let itemIndex = userID.carts.findIndex(item => item.cart && item.cart._id && item.cart._id.toString() === Id);
             console.log(`itemIndex: ${itemIndex}`)
             if(itemIndex !==-1) {
                 //found
-                const result=await Signup.updateOne({_id:userID._id},{
-                    $inc:{["carts."+ itemIndex+".cart.quantity"]:1}
-                })
-                const total=userID.carts[itemIndex].cart.price*userID.carts[itemIndex].cart.quantity
-                const totalUpdated=await Signup.updateOne({_id:userID._id},{
-                    $set:{["carts."+ itemIndex+".cart.total"]:total}
-                })
-                console.log(userID.carts[itemIndex].cart.total)
+                const filter = { _id: userID._id };
+                const update = {
+                    $inc: { ["carts." + itemIndex + ".cart.quantity"]: 1 },
+                    $set: {
+                        ["carts." + itemIndex + ".cart.total"]:
+                            (userID.carts[itemIndex].cart.quantity + 1) * userID.carts[itemIndex].cart.price,
+                    },
+                };
+
+            const result = await Signup.updateOne(filter, update);
+            console.log("total", update.$set["carts." + itemIndex + ".cart.total"]);
+
             }else{
                 //not found
                 userID.carts=userID.carts.concat({ cart: food}) 
@@ -223,12 +227,7 @@ App.post("/cart/restaurants/:id",jwtauth,async(req,res)=>{
                 const result1=await Signup.updateOne(
                     { _id: userID},
                     { $push: { carts:food } }
-                 )
-                 await userID.save();
-                 const result2=await Signup.updateOne(
-                    { _id: userID,"carts.cart._id":food._id},
-                    { $inc: { "carts.$.cart.total": food.price }}
-                 )
+                )
                 await userID.save();
                 console.log(userID.carts)
             }
@@ -236,38 +235,60 @@ App.post("/cart/restaurants/:id",jwtauth,async(req,res)=>{
             res.status(204).send();
         } else {
             console.log("login")
-            res.redirect('/login');
+            res.status(401).redirect('/login');
         }
     }
     catch(err){
         console.log(err)
-        res.render('start')
+        res.status(400).render('start')
         return 
     }
 })
 
 App.post("/cart/tiffin/:id",jwtauth,async(req,res)=>{
     try{
-    console.log(req.params.id)
     const Id=req.params.id
-    const quantity=req.body.quantity
-        console.log(quantity)
     const tiffin=await tiffinItem.findOne({_id:Id})
-
+   
     if(res.locals.user!=null){
         const userID=res.locals.user
-        userID.carts=await userID.carts.concat({cart:tiffin})
-        userID.carts[userID.carts.length-1].quantity=1
-        console.log(userID.carts[userID.carts.length-1])
-        const save=await userID.save()
-        res.status(204).send()
+        let itemIndex = userID.carts.findIndex(item => item.cart && item.cart._id && item.cart._id.toString() === Id);
+        console.log(`itemIndex: ${itemIndex}`)
+
+        if(itemIndex !==-1) {
+            //found
+            const filter = { _id: userID._id };
+            const update = {
+                $inc: { ["carts." + itemIndex + ".cart.quantity"]: 1 },
+                $set: {
+                    ["carts." + itemIndex + ".cart.total"]:
+                        (userID.carts[itemIndex].cart.quantity + 1) * userID.carts[itemIndex].cart.price,
+                },
+            };
+        const result = await Signup.updateOne(filter, update);
+        console.log("total", update.$set["carts." + itemIndex + ".cart.total"]);
+
+        }else{
+            //not found
+            userID.carts=userID.carts.concat({ cart: tiffin}) 
+            userID.carts.length-1
+            const result1=await Signup.updateOne(
+                { _id: userID},
+                { $push: { carts:tiffin } }
+            )
+            await userID.save();
+            console.log(userID.carts)
+        }
+        
+        res.status(204).send();
     }
     else{
-        res.redirect('/login')
+        res.status(401).redirect('/login')
     }
     }
     catch (err){
-        return 
+        console.log(err)
+        res.status(400).redirect('start')
     }
 })
 

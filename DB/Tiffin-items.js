@@ -24,6 +24,16 @@ const newSchema=new mongoose.Schema({
     },
     rating:{
         type:String
+    },
+    quantity:{
+        type:Number,
+        default:1
+    },
+    total:{
+        type:Number,
+        default:function(){
+            return this.price*this.quantity
+        }
     }
  })
 const TiffinItems=new mongoose.model('Tiffin-items',newSchema)

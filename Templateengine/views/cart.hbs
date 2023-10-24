@@ -17,17 +17,34 @@
     <ul class="item" style="margin-top: 20px;">
         <li class="item-cart">
             <div class="item-name">{{this.cart.name}}</div>
-            <div class="item-price" id="price{{@index}}">{{this.cart.price}}</div>
+            <div class="item-price" id="price{{@index}}">{{this.cart.total}}</div>
             <button class="addItemButton" onclick="addQuantity(this, {{this.cart.price}}, {{@index}})">+</button>
             <div class="quantity" id="quantity{{@index}}">{{this.cart.quantity}}</div>
-            <button class="addItemButton" onclick="subQuantity(this, {{this.cart.total}}, {{@index}})">-</button>
+            <button class="addItemButton" onclick="subQuantity(this, {{this.cart.price}}, {{@index}})">-</button>
         </li>
     </ul>
     {{/each}}
 
     <form method="POST" action="/clearcart" id="totalPrice" class="totalPrice" style="border-radius:15px">
         <button class="clearcart"> CLEAR CART</button>
-        <div style="color: white;display:flex;justify-content: right;margin-top: -30px;font-size:20px;font-weight:600;margin-right:20">{{purschase}}</div></form>
+        <div style="
+            display: inline-block;
+            color: white;
+            font-size: 25;
+            position: absolute;
+            font-weight: 600;
+            margin: -35 0 0 -180px;
+
+">TOTAL :</div>
+        <div id="endAmount" style="    color: white;
+    position: absolute;
+    display: inline-block;
+    justify-content: right;
+    margin-top: -30px;
+    font-size: 25;
+    font-weight: 600;
+    margin-left: -60px;
+    margin-top: -34px;">{{purschase}}</div></form>
 
     <div class="Pay">
         <button class="ReadyToPay" id="rzp-button1">Ready To Pay {{purschase}}</button>
@@ -35,10 +52,9 @@
     <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 
     <script>
-        let Amount=(document.getElementById("rzp-button1")*100).toString()
-        console.log(Amount)
         var orderId ;
         $(document).ready(function(){
+        var Amount=(document.getElementById("rzp-button1")*100).toString()
         var settings = {
         "url": "/cart",
         "method": "POST",
@@ -92,24 +108,32 @@
 
 
     //button
+    
     function addQuantity(element, price, index) {
+        const endAmountElement=document.getElementById("endAmount")
         let quantityElement = document.getElementById("quantity" + index);
         let priceElement = document.getElementById("price" + index);
         let quantity = parseInt(quantityElement.innerHTML) || 0; // Default to 0 if the innerHTML is not a number
+        let endAmount=parseInt(endAmountElement.innerHTML)
         quantity += 1;
         quantityElement.innerHTML = quantity;
         priceElement.innerHTML = quantity * price;
+        endAmountElement.innerHTML =endAmount+price
     }
 
     function subQuantity(element, price, index) {
+        const endAmountElement=document.getElementById("endAmount")
         let quantityElement = document.getElementById("quantity" + index);
         let priceElement = document.getElementById("price" + index);
         let quantity = parseInt(quantityElement.innerHTML) || 0; // Default to 0 if the innerHTML is not a number
-        if (quantity > 1) {
+        let endAmount=parseInt(endAmountElement.innerHTML) 
+        if (quantity >= 1) {
             quantity -= 1;
+            endAmountElement.innerHTML=endAmount-price
         }
         quantityElement.innerHTML = quantity;
-        priceElement.innerHTML = quantity * price;
+        priceElement.innerHTML =quantity * price;
+        
     }
     </script>
 </body>

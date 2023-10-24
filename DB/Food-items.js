@@ -32,7 +32,9 @@ const newSchema=new mongoose.Schema({
     },
     total:{
         type:Number,
-        default:0
+        default:function(){
+            return this.price*this.quantity
+        }
     }
  })
 const foodItems=new mongoose.model('Food-items',newSchema)
