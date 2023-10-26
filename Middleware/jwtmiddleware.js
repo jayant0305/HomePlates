@@ -16,6 +16,6 @@ const jwtauth=async(req,res,next)=>{
         res.redirect('/login')
     }
 }
-
-
 module.exports =jwtauth
+
+

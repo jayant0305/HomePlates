@@ -13,7 +13,7 @@ const bcrypt=require('bcryptjs')
 const async = require('hbs/lib/async')
 const { Sign } = require('crypto')
 const Razorpay = require('razorpay');
-const PORT=process.env.PORT |1906
+const PORT=process.env.PORT |9858
 const jwt=require('jsonwebtoken')
 const cookieParser=require("cookie-parser")
 const jwtauth=require('./Middleware/jwtmiddleware')
@@ -158,7 +158,7 @@ App.post("/signup",async(req,res)=>{
 
 App.get("/profile",jwtauth,async(req,res)=>{
     if(res.locals.user!=null){
-        res.render('profile',{user:res.locals.user.name_signup})
+        res.render('profile',{user:res.locals.user.name_signup,roleAdim:true})
     }
     else{
         res.render('profile')
@@ -169,12 +169,15 @@ App.get("/cart",jwtauth,async(req,res)=>{
     if(res.locals.user!=null){
         const userID=await res.locals.user
         let totalAmount = 0;
-        res.locals.user.carts.forEach((Mycart) => {
-            totalAmount = totalAmount + Mycart.cart.total
-        })
+        if(userID.carts.length>0){
+            res.locals.user.carts.forEach((Mycart) => {
+                totalAmount = totalAmount + Mycart.cart.total
+            })
+        }   
         userID.purchase =totalAmount
-        const save=await userID.save()        
-        res.render('cart',{carts:res.locals.user.carts,purschase:userID.purchase,userName:userID.name_signup})
+        const save=await userID.save()   
+
+        res.render('cart',{carts:res.locals.user.carts,purschase:userID.purchase,userName:userID.name_signup,roleAdim:true})
     }
     else{
         console.log("NO RESPONSE")
@@ -197,6 +200,51 @@ App.post('/cart',jwtauth,async(req,res)=>{
         });
     }
 })
+
+App.put('/cart/updateQuanity', jwtauth, async (req, res) => {
+    if (res.locals.user != null) {
+        const userID = await res.locals.user;
+        const data = req.body;
+        console.log(data.index, data.quantity)
+        try {
+            let update = {};
+
+            if (data.quantity === 0) {
+                update.$unset = { ["carts." + data.index]:0};
+                console.log("Item deleted");
+                const result = await Signup.findByIdAndUpdate(userID, update, { new: true });
+
+                if (result) {
+                    result.carts.splice(data.index, 1); // Remove the item at itemIndex
+                    await result.save();
+                    console.log("Item deleted");
+                    res.status(200)
+                    res.redirect('/cart')
+                } else {
+                    res.status(404).render('home');
+                }
+            } else {
+                update.$set = { ["carts." + data.index + ".cart.total"]: data.quantity };
+                const result = await Signup.findByIdAndUpdate(userID, update, { new: true });
+
+                if (result) {
+                    console.log("Updated");
+                    res.status(200)
+                    res.redirect('/cart')
+                } else {
+                    res.status(404).render('home');
+                }
+            }
+        } catch (error) {
+            console.error(error);
+            res.status(500).render('start');
+        }
+    } else {
+        res.status(401).render('login');
+    }
+});
+
+
 
 App.post("/cart/restaurants/:id",jwtauth,async(req,res)=>{
     try{
@@ -234,8 +282,8 @@ App.post("/cart/restaurants/:id",jwtauth,async(req,res)=>{
             
             res.status(204).send();
         } else {
-            console.log("login")
-            res.status(401).redirect('/login');
+            console.log("h")
+            res.status(401).redirect('/home');
         }
     }
     catch(err){
@@ -303,6 +351,31 @@ App.post("/clearcart",jwtauth,async(req,res)=>{
         res.redirect('/login')
     }
     res.status(204).redirect('/cart')
+})
+
+App.get("/signOut",jwtauth,async(req,res)=>{
+    try{
+        console.log("signOut")
+        if(res.locals.user!=null){
+            res.clearCookie("JWTtoken")
+            res.render("start")
+        }
+        else{
+            res.status(400).redirect('/login')
+        }
+    }
+    catch(err){
+        console.log(err)
+        res.status(500).render('start')
+        return 
+    }
+})
+
+
+App.get('/addItem',jwtauth,async(req,res)=>{
+    if(res.locals.user!=null){
+        res.render('addItem',{user:res.locals.user.name_signup,roleAdim:true})
+    }
 })
 
 App.use((req,res)=>{

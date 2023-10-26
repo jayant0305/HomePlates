@@ -7,6 +7,7 @@
     width: auto;
 }
 .nav{
+    display:inline-block;  
     position:absolute;
     left: 0;
     top: 0;
@@ -15,7 +16,8 @@
     background-color:white;
 }
 .logo{
-    display: inline;
+
+    display: inline-block;
     width: 34px;
     height: 49px;
     fill:#19cbfc;
@@ -34,7 +36,8 @@
 
 
 .nav_text{
-    width: 85%;
+    display:inline-block;
+    width: 90%;
     height: 50%;
     display: inline-block;
     background-color: white;
@@ -44,6 +47,7 @@
     margin-left: 2%;
 }
 .other{
+    display:inline-block;
     text-decoration: none;
     background-color: transparent;
     padding-left: 20px;
@@ -54,7 +58,9 @@
 .other:hover{
     color: #19cbfc;
 }
+
 .location{
+    
     padding-left: 10px;
     text-decoration: none;
     background-color: transparent;
@@ -68,19 +74,21 @@
     color: black;
 }
 .down_arrow{
-    position: relative;
-    width: 2%;
-    height: 30%;
+    position: absolute;
+    width: 12px;
+    height: 13px;
     color: black;
-    margin-right: 180px;
+    margin-right: 200px;
+    margin-top: 7px;
 }
 .down_arrow:hover{
     fill: #19cbfc;
 }
 .Search{
+    display:inline-block;
     text-decoration: none;
     background-color: transparent;
-    padding-left: 30px;
+    padding-left: 20px;
     color: black;
 }
 .Search_logo:hover{

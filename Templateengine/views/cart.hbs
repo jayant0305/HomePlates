@@ -8,14 +8,14 @@
 <body>
     {{>nav}}  
     <ul class="item" id="item" style="margin-top: 100px;">
-        <li class="item-cart">
+        <li class="item-cart" >
             <div class="item-name" style="font-weight:600">Item name </div>
             <div class="item-price" style="margin-left:60px">Price</div>
         </li>
     </ul>
     {{#each carts}}
     <ul class="item" style="margin-top: 20px;">
-        <li class="item-cart">
+        <li class="item-cart" id="item-cart{{@index}}">
             <div class="item-name">{{this.cart.name}}</div>
             <div class="item-price" id="price{{@index}}">{{this.cart.total}}</div>
             <button class="addItemButton" onclick="addQuantity(this, {{this.cart.price}}, {{@index}})">+</button>
@@ -47,14 +47,14 @@
     margin-top: -34px;">{{purschase}}</div></form>
 
     <div class="Pay">
-        <button class="ReadyToPay" id="rzp-button1">Ready To Pay {{purschase}}</button>
+        <button class="ReadyToPay" id="rzp-button1">READY TO PAY {{purschase}}</button>
     </div>
     <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 
     <script>
         var orderId ;
         $(document).ready(function(){
-        var Amount=(document.getElementById("rzp-button1")*100).toString()
+        var Amount=(document.getElementById("rzp-button1")*100)
         var settings = {
         "url": "/cart",
         "method": "POST",
@@ -63,7 +63,7 @@
             "Content-Type": "application/json"
         },
         "data": JSON.stringify({
-            "amount":"10000"
+            "amount":"20000"
         }),
         };
 
@@ -110,6 +110,7 @@
     //button
     
     function addQuantity(element, price, index) {
+        const payButtonElement=document.getElementById("rzp-button1")
         const endAmountElement=document.getElementById("endAmount")
         let quantityElement = document.getElementById("quantity" + index);
         let priceElement = document.getElementById("price" + index);
@@ -119,10 +120,13 @@
         quantityElement.innerHTML = quantity;
         priceElement.innerHTML = quantity * price;
         endAmountElement.innerHTML =endAmount+price
+        payButtonElement.innerHTML ="READY TO PAY "+(endAmount+price).toString()
+        updateQuantityOnServer(index, quantity);
     }
 
     function subQuantity(element, price, index) {
-        const endAmountElement=document.getElementById("endAmount")
+        let payButtonElement=document.getElementById("rzp-button1")
+        let endAmountElement=document.getElementById("endAmount")
         let quantityElement = document.getElementById("quantity" + index);
         let priceElement = document.getElementById("price" + index);
         let quantity = parseInt(quantityElement.innerHTML) || 0; // Default to 0 if the innerHTML is not a number
@@ -130,10 +134,27 @@
         if (quantity >= 1) {
             quantity -= 1;
             endAmountElement.innerHTML=endAmount-price
+            payButtonElement.innerHTML ="READY TO PAY "+(endAmount-price).toString()
+            quantityElement.innerHTML = quantity;
+            priceElement.innerHTML =quantity * price;
+            console.log(`INDEX IN SUB: ${index}`)
+            updateQuantityOnServer(index, quantity);
         }
-        quantityElement.innerHTML = quantity;
-        priceElement.innerHTML =quantity * price;
-        
+    }
+    function updateQuantityOnServer(index, quantity){
+        const url='/cart/updateQuantity'
+        const data = {
+            index: index,
+            quantity: quantity
+        };
+        console.log(typeof(index));
+        $.ajax({
+            url: url,
+            type: "PUT",
+            data: JSON.stringify(data),
+            contentType: "application/json",
+            success: true
+        });
     }
     </script>
 </body>
