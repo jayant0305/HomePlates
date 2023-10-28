@@ -13,13 +13,11 @@ const bcrypt=require('bcryptjs')
 const async = require('hbs/lib/async')
 const { Sign } = require('crypto')
 const Razorpay = require('razorpay');
-const PORT=process.env.PORT |9858
+const PORT=process.env.PORT |2170
 const jwt=require('jsonwebtoken')
 const cookieParser=require("cookie-parser")
 const jwtauth=require('./Middleware/jwtmiddleware')
 const googlesso=require('./Router/googlesso')
-const { Console } = require('console')
-const { use } = require('passport')
 const TiffinItems = require('./DB/Tiffin-items')
 
 const public_path=path.join(__dirname,"/public")
@@ -94,9 +92,6 @@ App.post("/login",async(req,res)=>{
       const user=await Signup.findOne({phone_signup:req.body.phone})
       const isMatch= await bcrypt.compare(req.body.password,user.password_signup)
       console.log(isMatch)
-
-      
-    
     
       if(isMatch){
         const token=await user.generateToken()
@@ -137,7 +132,7 @@ App.post("/signup",async(req,res)=>{
        })
 
         const token=await newSignup.generateToken()
-        console.log("Token Generate-signup "+token)
+        console.log("Token Generate-signup ")
         res.cookie("JWTtoken",token,{
             expires:new Date(Date.now()+1000000),
             httpOnly:true
@@ -158,7 +153,7 @@ App.post("/signup",async(req,res)=>{
 
 App.get("/profile",jwtauth,async(req,res)=>{
     if(res.locals.user!=null){
-        res.render('profile',{user:res.locals.user.name_signup,roleAdim:true})
+        res.render('profile',{user:res.locals.user,roleAdim:true})
     }
     else{
         res.render('profile')
@@ -194,51 +189,47 @@ App.post('/cart',jwtauth,async(req,res)=>{
             currency: "INR",
             receipt: "order_rcptid_11"
         };
+        console.log("/cart")
         instance.orders.create(options, function(err, order) {
-            // console.log("order: ",order);
-            res.send({orderId:order.id});
+            console.log("order: ",order);
+            res.send({orderId:order});
         });
     }
 })
 
-App.put('/cart/updateQuanity', jwtauth, async (req, res) => {
+App.put('/cart/updateQuantity', jwtauth, async (req, res) => {
     if (res.locals.user != null) {
         const userID = await res.locals.user;
         const data = req.body;
         console.log(data.index, data.quantity)
-        try {
-            let update = {};
+        let update = {};
+        if (data.quantity === 0) {
+            update.$unset = { ["carts." + data.index]:0};
+            console.log("Quantity:",data.quantity)
+            const result = await Signup.findByIdAndUpdate({_id:userID}, update, { new: true });
+            if (result) {
+                result.carts.splice(data.index, 1); // Remove the item at itemIndex
+                await result.save();
+                console.log("DELETED");
+                res.status(200)
 
-            if (data.quantity === 0) {
-                update.$unset = { ["carts." + data.index]:0};
-                console.log("Item deleted");
-                const result = await Signup.findByIdAndUpdate(userID, update, { new: true });
-
-                if (result) {
-                    result.carts.splice(data.index, 1); // Remove the item at itemIndex
-                    await result.save();
-                    console.log("Item deleted");
-                    res.status(200)
-                    res.redirect('/cart')
-                } else {
-                    res.status(404).render('home');
-                }
+                window.location.reload('/cart');
             } else {
-                update.$set = { ["carts." + data.index + ".cart.total"]: data.quantity };
-                const result = await Signup.findByIdAndUpdate(userID, update, { new: true });
-
-                if (result) {
-                    console.log("Updated");
-                    res.status(200)
-                    res.redirect('/cart')
-                } else {
-                    res.status(404).render('home');
-                }
+                res.status(404).render('home');
             }
-        } catch (error) {
-            console.error(error);
-            res.status(500).render('start');
+        } else {
+            update.$set = { ["carts." + data.index + ".cart.total"]: data.quantity };
+            const result = await Signup.findByIdAndUpdate({_id:userID}, update, { new: true });
+
+            if (result) {
+                console.log("Updated");
+                res.status(200)
+                res.redirect('/cart')
+            } else {
+                res.status(404).render('home');
+            }
         }
+    
     } else {
         res.status(401).render('login');
     }

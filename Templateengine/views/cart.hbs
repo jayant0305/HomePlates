@@ -26,35 +26,33 @@
     {{/each}}
 
     <form method="POST" action="/clearcart" id="totalPrice" class="totalPrice" style="border-radius:15px">
+    <div class="totalPrice-cart">
         <button class="clearcart"> CLEAR CART</button>
-        <div style="
-            display: inline-block;
-            color: white;
-            font-size: 25;
-            position: absolute;
-            font-weight: 600;
-            margin: -35 0 0 -180px;
+        <div class="endAmount" style="margin-left:80%">TOTAL:</div>
+        <div id="endAmount" class="endAmount">{{purschase}}</div>
 
-">TOTAL :</div>
-        <div id="endAmount" style="    color: white;
-    position: absolute;
-    display: inline-block;
-    justify-content: right;
-    margin-top: -30px;
-    font-size: 25;
-    font-weight: 600;
-    margin-left: -60px;
-    margin-top: -34px;">{{purschase}}</div></form>
+    </div>
+    </form>
+
+
 
     <div class="Pay">
-        <button class="ReadyToPay" id="rzp-button1">READY TO PAY {{purschase}}</button>
+        <button class="ReadyToPay" id="rzp-button1" onclick="readyToPay()">READY TO PAY {{purschase}}</button>
     </div>
     <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 
     <script>
         var orderId ;
+        var userName='{{userName}}';
+        var Amount=document.getElementById("endAmount")
+        console.log("TOTAL AMOUNT" +Amount.innerHTML)
+        var object={
+            amount:Amount.innerHTML*100
+        }
+        function getOrderId(){
+        object.amount = Amount.innerHTML*100
         $(document).ready(function(){
-        var Amount=(document.getElementById("rzp-button1")*100)
+        console.log("function Call 2")
         var settings = {
         "url": "/cart",
         "method": "POST",
@@ -62,9 +60,7 @@
         "headers": {
             "Content-Type": "application/json"
         },
-        "data": JSON.stringify({
-            "amount":"20000"
-        }),
+        "data": JSON.stringify(object),
         };
 
         //creates new orderId everytime
@@ -74,14 +70,18 @@
         $("button").show();
         });
         });
+
+        }
         document.getElementById('rzp-button1').onclick = function(e){
+            console.log("Razorpay Click 1")
+            getOrderId()
             var options = {
             "key": "rzp_test_hmERS1B5i4JG0n", // Enter the Key ID generated from the Dashboard
-            "amount": "10000", // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
+            "amount":object.amount, // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
             "currency": "INR",
-            "name": "Jayant",
+            "name": userName,
             "description": "Test Transaction",
-            "image": "https://example.com/your_logo",
+            "image": "",
             "order_id": orderId, //This is a sample Order ID. Pass the `id` obtained in the response of Step 1
             "handler": function (response){
                 alert(response.razorpay_payment_id);
@@ -138,6 +138,7 @@
             quantityElement.innerHTML = quantity;
             priceElement.innerHTML =quantity * price;
             console.log(`INDEX IN SUB: ${index}`)
+
             updateQuantityOnServer(index, quantity);
         }
     }
