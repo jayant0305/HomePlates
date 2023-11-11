@@ -164,12 +164,28 @@
     align-items:normal;
     padding-left: 20px;
 }
+@keyframes bottomToTop {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
 .dyntext{
     color: black;
     font-size: 30px;
     font-weight: 600;
     letter-spacing: .45px;
-    margin-top: 70px;
+    margin-top: 50px;
+    transition: transform 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+    opacity: 1;
+    fill: #fc8019;
+    transform: translateY(0);
+    margin-bottom: 10px;
 }
 .sub_dyntext{
     color: #686b78;
