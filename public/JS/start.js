@@ -33,7 +33,7 @@ document.addEventListener("DOMContentLoaded", function () {
     "Cooked with Care, Served with Love.",
     "Bringing Families Together", "One Meal at a Time.",
     "From Our Home to Yours", "A Taste of Tradition.",
-    "Elevate Your Everyday with Home Cooked Perfection.",
+    "Home Cooked Perfection.",
     "Nourishing Souls", "One Home Cooked Dish at a Time."
   ];
 
