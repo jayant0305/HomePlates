@@ -348,10 +348,12 @@ App.get("/signOut",jwtauth,async(req,res)=>{
     try{
         console.log("signOut")
         if(res.locals.user!=null){
+            console.log("Signout")
             res.clearCookie("JWTtoken")
-            res.render("start")
+            res.status(400).redirect('/login')
         }
         else{
+            console.log("Else Signout")
             res.status(400).redirect('/login')
         }
     }
